@@ -1,0 +1,28 @@
+USE ProductionERP;
+GO
+
+-- Creating new model
+
+DROP TABLE IF EXISTS Production.QualityInspection;
+GO
+
+DROP TABLE IF EXISTS Production.OperationHistory;
+GO
+
+DROP TABLE IF EXISTS Production.WorkOrder;
+GO
+
+DROP TABLE IF EXISTS Master.Item;
+GO
+
+DROP TABLE IF EXISTS Master.Machine;
+GO
+
+DROP TABLE IF EXISTS Master.Employee;
+GO
+
+SELECT 
+    TABLE_SCHEMA,
+    TABLE_NAME
+FROM INFORMATION_SCHEMA.TABLES
+ORDER BY TABLE_SCHEMA, TABLE_NAME;

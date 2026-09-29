@@ -1,0 +1,5 @@
+CREATE DATABASE ProductionERP;
+GO
+
+USE ProductionERP;
+GO

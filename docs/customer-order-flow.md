@@ -1,0 +1,52 @@
+# Customer Order and Production Flow
+
+```text
+Customer Places Order
+        │
+        ▼
+Inventory.CustomerOrder
+        │
+        ▼
+Master.Customer
+        │
+        ▼
+Master.Product
+        │
+        ▼
+Production.ProductRecipe
+        │
+        ▼
+Production.RecipeParameter
+        │
+        ▼
+Production.ProcessRoute
+        │
+        ▼
+Production.ProcessRouteStep
+        │
+        ▼
+Production.ProcessStep
+        │
+        ▼
+Production.Lot
+        │
+        ▼
+Production.EpiwaferRun
+        │
+        ▼
+Production.ProcessHistory
+        │
+        ▼
+Production.QualityResult
+        │
+        ▼
+Inventory.ERPIntegrationQueue
+        │
+        ▼
+Inventory.InventoryTransaction
+        │
+        ▼
+Inventory.Stock
+        │
+        ▼
+Customer Shipment

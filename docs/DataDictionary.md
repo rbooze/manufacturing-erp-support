@@ -1149,6 +1149,199 @@ One row per support incident.
 
 ---
 
+# Support.SupportTicket
+
+## Purpose
+
+Stores incoming support requests submitted by users, operations teams, or monitoring systems.
+
+A SupportTicket represents the initial report of a problem before investigation and root cause analysis.
+
+## Business Grain
+
+One row per support request.
+
+## Primary Key
+
+TicketID
+
+## Relationships
+
+| Related Table | Relationship |
+|---|---|
+|Support.Incident|A ticket may become a formally investigated incident|
+|Support.RootCauseAnalysis|Stores completed root cause investigation|
+|Master.Employee|Assigned support owner|
+
+## Columns
+
+| Column | Data Type | Nullable | Description |
+|---|---|---|---|
+|TicketID|INT|No|Primary key|
+|TicketNumber|VARCHAR|No|Human-readable ticket identifier|
+|Priority|VARCHAR|Yes|Business impact priority|
+|Category|VARCHAR|Yes|Support classification|
+|SystemAffected|VARCHAR|Yes|Application or system impacted|
+|Description|VARCHAR|Yes|User-reported issue description|
+|Status|VARCHAR|Yes|Current ticket status|
+|AssignedTo|INT|Yes|Employee responsible for ticket|
+|CreatedDate|DATETIME2|Yes|Ticket creation timestamp|
+|ClosedDate|DATETIME2|Yes|Ticket completion timestamp|
+
+## Example Categories
+
+|Category|Example|
+|---|---|
+|Integration|MES to ERP failure|
+|Production|Lot processing issue|
+|Quality|Inspection problem|
+|Access|User login problem|
+|Equipment|Machine-related issue|
+
+## Typical Support Questions
+
+- Who owns this issue?
+- What system is affected?
+- Has this problem happened before?
+- Is there a known resolution?
+- Does this require escalation?
+
+---
+
+# Support.RootCauseAnalysis
+
+## Purpose
+
+Stores formal root cause investigations.
+
+A mature support organization does not only close tickets; it identifies why failures occurred and prevents recurrence.
+
+## Business Grain
+
+One row per completed root cause analysis.
+
+## Primary Key
+
+RCAID
+
+## Foreign Keys
+
+- TicketID → Support.SupportTicket
+
+## Relationships
+
+| Related Table | Relationship |
+|---|---|
+|Support.SupportTicket|Original support request|
+|Support.Incident|Related production issue|
+
+## Columns
+
+| Column | Data Type | Nullable | Description |
+|---|---|---|---|
+|RCAID|INT|No|Primary key|
+|TicketID|INT|No|Related support ticket|
+|RootCauseCategory|VARCHAR|Yes|Classification of failure|
+|RootCauseDetail|VARCHAR|Yes|Detailed explanation|
+|CorrectiveAction|VARCHAR|Yes|Immediate fix|
+|PreventiveAction|VARCHAR|Yes|Steps to prevent recurrence|
+|CompletedDate|DATETIME2|Yes|RCA completion date|
+
+## Root Cause Categories
+
+|Category|Example|
+|---|---|
+|Data Configuration|Incorrect item mapping|
+|Application|Software defect|
+|Integration|Interface failure|
+|Infrastructure|Database/server issue|
+|Process|Incorrect procedure|
+
+## Typical Support Questions
+
+- Why did this happen?
+- Was the issue corrected permanently?
+- Can automation prevent recurrence?
+- Should documentation be updated?
+
+---
+
+# Support Ticket Lifecycle
+
+```
+User Reports Problem
+
+        |
+        v
+
+SupportTicket Created
+
+        |
+        v
+
+Investigation
+
+        |
+        v
+
+Incident Identified
+
+        |
+        v
+
+Root Cause Analysis
+
+        |
+        v
+
+Corrective / Preventive Action
+
+        |
+        v
+
+Knowledge Base Update
+```
+
+---
+
+# Interview Notes
+
+A strong support organization separates:
+
+## Ticket Management
+
+"What problem was reported?"
+
+Stored in:
+
+```
+Support.SupportTicket
+```
+
+## Incident Investigation
+
+"What system failure occurred?"
+
+Stored in:
+
+```
+Support.Incident
+```
+
+## Root Cause Analysis
+
+"Why did it happen and how do we prevent it?"
+
+Stored in:
+
+```
+Support.RootCauseAnalysis
+```
+
+This separation allows teams to track not only the immediate fix but also long-term reliability improvements.
+
+---
+
 # Support.KnowledgeBase
 
 ## Purpose

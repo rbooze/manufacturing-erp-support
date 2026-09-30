@@ -302,43 +302,62 @@ Maintenance
 ```mermaid
 flowchart TD
 
-User[User Issue]
+    UserIssue[User Reports Problem]
 
-User
--->
-Session[UserSession]
+    Ticket[Support.SupportTicket]
 
-Session
--->
-Log[ApplicationLog]
+    Incident[Support.Incident]
 
-Log
--->
-Incident[Incident]
+    RCA[Support.RootCauseAnalysis]
 
-Incident
--->
-KB[KnowledgeBase]
+    KB[Support.KnowledgeBase]
 
+
+    UserIssue --> Ticket
+    Ticket --> Incident
+    Incident --> RCA
+    RCA --> KB
 ```
 
-## Example
+## Explanation
 
-Problem:
+### Support.SupportTicket
 
-> Operator cannot release production order.
+The initial request entered by a user, operator, or monitoring system.
 
-Investigation:
+Example:
 
-```
-UserSession
-      |
-ApplicationLog
-      |
-Incident History
-      |
-Known Resolution
-```
+> "Production lot completed but inventory is missing."
+
+---
+
+### Support.Incident
+
+The investigated business or technical issue.
+
+Example:
+
+> "ERP inventory posting failed for completed lot."
+
+---
+
+### Support.RootCauseAnalysis
+
+The documented reason the issue occurred.
+
+Example:
+
+> "Incorrect ERP item mapping caused posting failure."
+
+---
+
+### Support.KnowledgeBase
+
+The reusable solution created after the issue is resolved.
+
+Example:
+
+> "How to troubleshoot missing ERP inventory postings."
 
 ---
 

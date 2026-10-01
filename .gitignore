@@ -1,3 +1,9 @@
+# Ignore Visual Studio temporary files and build output
+.vs/
+bin/
+obj/
+*.user
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

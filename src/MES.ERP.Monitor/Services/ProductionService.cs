@@ -5,12 +5,12 @@ namespace MES.ERP.Monitor.Services;
 
 public class ProductionService
 {
-    private readonly string connectionString =
+    private readonly string _connectionString =
         @"Server=localhost\SQLEXPRESS;
           Database=ProductionERP;
           Trusted_Connection=True;
           TrustServerCertificate=True;";
-
+   
     public List<ProductionLot> GetCompletedLots()
     {
         List<ProductionLot> lots = new();
@@ -35,7 +35,7 @@ public class ProductionService
         ";
 
         using SqlConnection connection =
-            new SqlConnection(connectionString);
+            new SqlConnection(_connectionString);
 
         connection.Open();
 
@@ -94,7 +94,7 @@ public class ProductionService
     ";
 
         using SqlConnection connection =
-            new SqlConnection(connectionString);
+            new SqlConnection(_connectionString);
 
         connection.Open();
 
@@ -134,5 +134,175 @@ public class ProductionService
         }
 
         return summary;
+    }
+
+    public List<LotInvestigation> GetLotInvestigation(string lotNumber)
+    {
+        var results = new List<LotInvestigation>();
+
+        using var connection = new SqlConnection(_connectionString);
+
+        connection.Open();
+
+        var query = @"
+                    SELECT
+                        l.LotNumber,
+                        l.LotStatus,
+
+                        o.OrderNumber,
+
+                        c.CustomerName,
+
+                        p.ProductName,
+
+                        ps.StepName,
+                        ph.ProcessStatus,
+                        ph.Notes,
+
+                        q.TestType,
+                        q.MeasurementValue,
+                        q.SpecificationMin,
+                        q.SpecificationMax,
+                        q.Result AS QualityResult,
+
+                        e.ProcessingStatus AS ERPStatus,
+                        e.ErrorMessage
+
+                    FROM Production.Lot l
+
+                    LEFT JOIN Inventory.CustomerOrder o
+                        ON l.OrderID = o.OrderID
+
+                    LEFT JOIN Master.Customer c
+                        ON l.CustomerID = c.CustomerID
+
+                    LEFT JOIN Master.Product p
+                        ON l.ProductID = p.ProductID
+
+                    LEFT JOIN Production.ProcessHistory ph
+                        ON l.LotID = ph.LotID
+
+                    LEFT JOIN Production.ProcessStep ps
+                        ON ph.ProcessStepID = ps.ProcessStepID
+
+                    LEFT JOIN Production.QualityResult q
+                        ON l.LotID = q.LotID
+
+                    LEFT JOIN Inventory.ERPIntegrationQueue e
+                        ON e.ReferenceID = l.LotNumber
+
+                    WHERE l.LotNumber = @LotNumber;
+                    ";
+
+        using var command = new SqlCommand(query, connection);
+
+        command.Parameters.AddWithValue("@LotNumber", lotNumber);
+
+        using var reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            results.Add(new LotInvestigation
+            {
+                LotNumber = reader["LotNumber"].ToString(),
+                LotStatus = reader["LotStatus"].ToString(),
+
+                OrderNumber = reader["OrderNumber"].ToString(),
+                CustomerName = reader["CustomerName"].ToString(),
+                ProductName = reader["ProductName"].ToString(),
+
+                StepName = reader["StepName"].ToString(),
+                ProcessStatus = reader["ProcessStatus"].ToString(),
+                Notes = reader["Notes"].ToString(),
+
+                TestType = reader["TestType"].ToString(),
+
+                MeasurementValue = reader["MeasurementValue"] == DBNull.Value
+                    ? null
+                    : Convert.ToDecimal(reader["MeasurementValue"]),
+
+                SpecificationMin = reader["SpecificationMin"] == DBNull.Value
+                    ? null
+                    : Convert.ToDecimal(reader["SpecificationMin"]),
+
+                SpecificationMax = reader["SpecificationMax"] == DBNull.Value
+                    ? null
+                    : Convert.ToDecimal(reader["SpecificationMax"]),
+
+                QualityResult = reader["QualityResult"].ToString(),
+
+                ERPStatus = reader["ERPStatus"].ToString(),
+                ErrorMessage = reader["ErrorMessage"].ToString()
+            });
+        }
+
+        return results;
+    }
+
+    public Dictionary<string, int> GetSupportMetrics()
+    {
+        var metrics = new Dictionary<string, int>();
+
+        using var connection = new SqlConnection(_connectionString);
+
+        connection.Open();
+
+        var query = @"
+        SELECT 
+            'ERP Failures' AS Metric,
+            COUNT(*) AS Value
+        FROM Inventory.ERPIntegrationQueue
+        WHERE ProcessingStatus = 'Failed'
+
+        UNION ALL
+
+        SELECT
+            'Quality Holds',
+            COUNT(*)
+        FROM Production.Lot
+        WHERE LotStatus = 'Quality Hold'
+
+        UNION ALL
+
+        SELECT
+            'Processing Lots',
+            COUNT(*)
+        FROM Production.Lot
+        WHERE LotStatus = 'Processing';
+    ";
+
+        using var command = new SqlCommand(query, connection);
+
+        using var reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            metrics.Add(
+                reader["Metric"].ToString(),
+                Convert.ToInt32(reader["Value"])
+            );
+        }
+
+        return metrics;
+    }
+
+    public string? GetFailedERPLot()
+    {
+        using var connection = new SqlConnection(_connectionString);
+
+        connection.Open();
+
+        var query = @"
+            SELECT TOP 1 ReferenceID
+            FROM Inventory.ERPIntegrationQueue
+            WHERE ProcessingStatus = 'Failed'
+            ORDER BY CreatedDate DESC;
+            ";
+
+        using var command = new SqlCommand(query, connection);
+
+        var result = command.ExecuteScalar();
+
+        return result?.ToString();
     }
 }

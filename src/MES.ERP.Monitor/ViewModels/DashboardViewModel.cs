@@ -144,7 +144,19 @@ public class DashboardViewModel : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-    
+
+    private int erpFailures;
+
+    public int ERPFailures
+    {
+        get => erpFailures;
+        set
+        {
+            erpFailures = value;
+            OnPropertyChanged();
+        }
+    }
+
     private ProductionLot? selectedLot;
 
     public ProductionLot? SelectedLot
@@ -185,6 +197,11 @@ public class DashboardViewModel : INotifyPropertyChanged
         QualityHoldRate = summary.QualityHoldRate;
 
         ActiveLots = summary.ActiveLots;
+
+        Dictionary<string, int> supportMetrics =
+            productionService.GetSupportMetrics();
+
+        ERPFailures = supportMetrics["ERP Failures"];
 
         List<ProductionLot> lots =
             productionService.GetCompletedLots();

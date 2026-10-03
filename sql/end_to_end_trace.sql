@@ -23,11 +23,11 @@ SELECT
     l.QuantityCompleted,
 
     -- Epiwafer Run
-    er.RunID,
-    er.RecipeName,
-    er.RunStatus,
-    er.StartTime AS RunStartTime,
-    er.EndTime AS RunEndTime,
+    --er.RunID,
+    --er.RecipeName,
+    --er.RunStatus,
+    --er.StartTime AS RunStartTime,
+    --er.EndTime AS RunEndTime,
 
     -- Process History
     ph.HistoryID,
@@ -76,8 +76,8 @@ JOIN Master.Product p
 JOIN Production.Lot l
     ON co.OrderID = l.OrderID
 
-LEFT JOIN Production.EpiwaferRun er
-    ON l.LotID = er.LotID
+--LEFT JOIN Production.EpiwaferRun er
+--    ON l.LotID = er.LotID
 
 LEFT JOIN Production.ProcessHistory ph
     ON l.LotID = ph.LotID

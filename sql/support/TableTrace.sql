@@ -31,13 +31,14 @@ INNER JOIN Master.Product p WITH (NOLOCK)
 INNER JOIN Master.Customer c WITH (NOLOCK)
 	ON l.CustomerID = c.CustomerID
 WHERE 
-	OrderID = 4;
+	l.LotNumber = 'LOT-20260909-0020'
+	--OrderID = 2;
 
 -- ==================================================
 
 -- Use a GROUP BY here because Production.ProcessHistory has duplicate data
 -- Process History
-SELECT DISTINCT
+SELECT 
 	MIN(ph.HistoryID) AS HistoryID,
 	l.LotNumber,
 	ps.StepNumber,
@@ -55,7 +56,7 @@ INNER JOIN Production.ProcessStep ps WITH (NOLOCK)
 LEFT JOIN Master.Equipment e WITH (NOLOCK)
 	ON ph.EquipmentID = e.EquipmentID
 WHERE
-	l.LotID = 1001
+	l.LotID = 25
 GROUP BY
     l.LotNumber,
     ps.StepNumber,
@@ -68,3 +69,31 @@ GROUP BY
 ORDER BY
     ps.StepNumber ASC;
 
+SELECT
+	*
+FROM Maintenance.EquipmentEvent
+
+SELECT
+	*
+FROM Maintenance.EquipmentAlarm
+
+-- ==================================================
+
+-- Quality Result - Did the lot pass/why did it fail (DUPLICATE DATA)
+SELECT
+	qr.QualityID,
+	qr.LotID,
+	l.LotNumber,
+	qr.TestType,
+	qr.Result,
+	qr.TestedDate
+FROM Production.QualityResult qr WITH (NOLOCK)
+INNER JOIN Production.Lot l WITH (NOLOCK)
+	ON qr.LotID = l.LotID
+WHERE
+	qr.LotID = 25
+	--AND qr.QualityID = 1008
+
+-- ==================================================
+
+-- 

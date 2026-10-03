@@ -1,0 +1,90 @@
+﻿<Window x:Class="MES.ERP.Monitor.LotInvestigationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Lot Investigation"
+        Height="700"
+        Width="900">
+
+    <Grid Margin="20">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Search -->
+        <StackPanel Orientation="Horizontal">
+
+            <TextBox x:Name="LotNumberTextBox"
+                     Width="220"
+                     Height="30"/>
+
+            <Button Content="Search"
+                    Width="100"
+                    Margin="10,0,0,0"
+                    Click="Search_Click"/>
+
+        </StackPanel>
+
+        <!-- Details -->
+        <ScrollViewer Grid.Row="2"
+                      Margin="0,20,0,0">
+
+            <StackPanel>
+
+                <GroupBox Header="Lot Summary"
+                          Margin="5">
+
+                    <StackPanel Margin="10">
+
+                        <TextBlock x:Name="LotText"/>
+                        <TextBlock x:Name="OrderText"/>
+                        <TextBlock x:Name="CustomerText"/>
+                        <TextBlock x:Name="ProductText"/>
+                        <TextBlock x:Name="StatusText"/>
+
+                    </StackPanel>
+
+                </GroupBox>
+
+                <GroupBox Header="Process History"
+                          Margin="5">
+
+                    <DataGrid x:Name="ProcessGrid"
+                              AutoGenerateColumns="True"
+                              Height="150"
+                              IsReadOnly="True"/>
+
+                </GroupBox>
+
+                <GroupBox Header="Quality Result"
+                          Margin="5">
+
+                    <StackPanel Margin="10">
+
+                        <TextBlock x:Name="QualityText"/>
+
+                    </StackPanel>
+
+                </GroupBox>
+
+                <GroupBox Header="ERP Integration"
+                          Margin="5">
+
+                    <StackPanel Margin="10">
+
+                        <TextBlock x:Name="ERPText"
+                                   TextWrapping="Wrap"/>
+
+                    </StackPanel>
+
+                </GroupBox>
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+    </Grid>
+
+</Window>

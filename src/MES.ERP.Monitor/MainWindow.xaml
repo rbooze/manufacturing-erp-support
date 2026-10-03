@@ -26,20 +26,37 @@
 
             <Grid>
 
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+
                 <TextBlock Text="MES Production Dashboard"
+                           Grid.Column="0"
                            Foreground="White"
                            FontSize="32"
                            FontWeight="Bold"
                            VerticalAlignment="Center"
                            Margin="25,0"/>
 
+
+                <Button Content="Lot Investigation"
+                        Grid.Column="1"
+                        Width="160"
+                        Height="35"
+                        Margin="10"
+                        Click="LotInvestigation_Click"/>
+
+
                 <TextBlock Text="{Binding LastUpdated}"
+                           Grid.Column="2"
                            Foreground="White"
                            FontSize="16"
                            FontWeight="SemiBold"
-                           HorizontalAlignment="Right"
                            VerticalAlignment="Center"
-                           Margin="0,0,30,0"/>
+                           Margin="10,0,30,0"/>
 
             </Grid>
 
@@ -50,6 +67,7 @@
               Margin="25">
 
             <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -193,6 +211,7 @@
 
             </Border>
 
+            <!-- Quality Hold Rate -->
             <Border Grid.Column="1"
                     Background="White"
                     CornerRadius="10"
@@ -236,6 +255,32 @@
                                FontSize="36"
                                FontWeight="Bold"
                                Foreground="Orange"
+                               HorizontalAlignment="Center"/>
+
+                </StackPanel>
+
+            </Border>
+
+            <!-- ERP Failures -->
+            <Border Grid.Column="3"
+                    Background="White"
+                    CornerRadius="10"
+                    Margin="8"
+                    Padding="25"
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch"
+                    MouseLeftButtonDown="ERPFailure_Click">
+
+                <StackPanel VerticalAlignment="Center">
+
+                    <TextBlock Text="ERP Failures"
+                               FontSize="18"
+                               HorizontalAlignment="Center"/>
+
+                    <TextBlock Text= "{Binding ERPFailures}"
+                               FontSize="36"
+                               FontWeight="Bold"
+                               Foreground="Red"
                                HorizontalAlignment="Center"/>
 
                 </StackPanel>
